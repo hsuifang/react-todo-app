@@ -1,0 +1,33 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  font-weight: normal;
+  letter-spacing: 1px;
+  transition: all 1s;
+}
+
+body {
+  min-height: 100vh;
+}
+
+ul {
+  margin: 0 !important;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+a {
+  text-decoration: none !important;
+}
