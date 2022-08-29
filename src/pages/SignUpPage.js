@@ -1,26 +1,51 @@
 import axios from 'axios'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
+import Input from '../components/Input'
 import loginHero from '../assets/images/todo-hero.png'
 import logoCheck from '../assets/images/logo-check.png'
-import { Link } from 'react-router-dom'
 
 function SignUpPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
   const [enable, setEnable] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [signUpSuccess, setSignUpSucess] = useState(false)
+
   const [userData, setUserData] = useState({
     email: '',
     nickname: '',
     password: '',
     passwordAgain: '',
   })
+  console.log(errors)
 
-  const handleSubmit = (e) => {
+  const [errorsMsg, setErrorsMsg] = useState([])
+
+  const onSubmit = async (e) => {
     e.preventDefault()
-    const { email, nickname, password } = userData
-    axios.post('https://todoo.5xcamp.us/users', {
-      user: { email, nickname, password },
-    })
+    if (loading) return
+    try {
+      setLoading(true)
+      const { email, nickname, password } = userData
+      await axios.post('/users', {
+        user: { email, nickname, password },
+      })
+      setSignUpSucess(true)
+    } catch (error) {
+      // regarless
+      if (error.response.status === 422) {
+        setErrorsMsg(error.response.data.error)
+      }
+    } finally {
+      setLoading(false)
+    }
   }
-
   const updateUserData = async (e) => {
     const { name, value } = e.target
     const data = {
@@ -30,7 +55,6 @@ function SignUpPage() {
     setUserData(data)
     setEnable(validInput(data))
   }
-
   const validInput = ({ email, nickname, password, passwordAgain }) => {
     const allInput = email && nickname && password && passwordAgain
     const passwordSame = password === passwordAgain
@@ -49,75 +73,76 @@ function SignUpPage() {
             <img src={loginHero} alt='login hero' className='d-none d-lg-block' />
           </div>
           <div className='col-12 col-lg-4 offset-lg-1'>
-            <h2>註冊帳號</h2>
-            <form onSubmit={handleSubmit}>
-              <div className='form-group mb-3'>
-                <label htmlFor='email' className='form-label'>
-                  Email
-                </label>
-                <input
+            <h2 className='mb-4'>註冊帳號</h2>
+            {errorsMsg && (
+              <ul>
+                {errorsMsg.map((err) => (
+                  <li key={err}>{err}</li>
+                ))}
+              </ul>
+            )}
+
+            {signUpSuccess ? (
+              <div className='alert alert-success' role='alert'>
+                <p>註冊成功，前往TODO List頁面</p>
+              </div>
+            ) : (
+              <form onSubmit={onSubmit} data-testid='sign-up-form'>
+                <Input
                   id='email'
                   name='email'
                   type='email'
-                  className='form-control mb-1'
-                  placeholder='請輸入Email'
+                  label='Email'
+                  help={errors.email}
                   value={userData.email}
                   onChange={updateUserData}
                 />
-                <p className='text-danger fs-7'>此欄位不可為空</p>
-              </div>
-              <div className='form-group mb-3'>
-                <label htmlFor='nickname' className='form-label'>
-                  您的暱稱
-                </label>
-                <input
-                  name='nickname'
+                {errors.email ? 'asdf' : 'asdfdd'}
+                <Input
                   id='nickname'
-                  type='text'
-                  className='form-control mb-1'
+                  name='nickname'
+                  label='您的暱稱'
                   value={userData.nickname}
+                  help={errors.nickname}
                   onChange={updateUserData}
                 />
-                <p className='text-danger fs-7'>此欄位不可為空</p>
-              </div>
-              <div className='form-group mb-3'>
-                <label htmlFor='password' className='form-label'>
-                  密碼
-                </label>
-                <input
+                <Input
                   id='password'
                   name='password'
                   type='password'
-                  className='form-control mb-1'
+                  label='密碼'
                   value={userData.password}
+                  help={errors.password}
                   onChange={updateUserData}
                 />
-                <p className='text-danger fs-7'>此欄位不可為空</p>
-              </div>
-              <div className='form-group mb-3'>
-                <label htmlFor='passwordAgain' className='form-label'>
-                  再次輸入密碼
-                </label>
-                <input
+                <Input
                   id='passwordAgain'
                   name='passwordAgain'
                   type='password'
-                  className='form-control mb-1'
+                  label='再次輸入密碼'
                   value={userData.passwordAgain}
+                  help={errors.passwordAgain}
                   onChange={updateUserData}
                 />
-                <p className='text-danger fs-7'>此欄位不可為空</p>
-              </div>
-              <div className='w-50 m-auto mb-4'>
-                <button
-                  className='btn btn-secondary w-100 fw-bold'
-                  type='submit'
-                  disabled={!enable}
-                >
-                  註冊帳號
-                </button>
-              </div>
-            </form>
+
+                <div className='w-50 m-auto mb-4'>
+                  <button
+                    className='btn btn-secondary w-100 fw-bold'
+                    type='submit'
+                    disabled={!enable || loading}
+                  >
+                    {loading && (
+                      <span
+                        className='spinner-grow spinner-grow-sm'
+                        role='status'
+                        aria-hidden='true'
+                      ></span>
+                    )}
+                    註冊帳號
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>

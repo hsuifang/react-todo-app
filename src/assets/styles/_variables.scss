@@ -1,28 +1,29 @@
-$gray-100: #E5E5E5;
-
+$gray-100: #e5e5e5;
 
 // scss-docs-start theme-color-variables
-$primary: #FFD370; //$blue !default;
+$primary: #ffd370; //$blue !default;
 $secondary: #333; //$gray-600 !default;
-$danger: #D87355; //$red !default;
-$info: #9F9A91;
+$danger: #d87355; //$red !default;
+$success: rgb(174, 255, 174);
+$info: #9f9a91;
 $light: $gray-100 !default;
 $black: #000;
 // scss-docs-end theme-color-variables
 
 $theme-colors: (
-  "primary":    $primary,
-  "secondary":  $secondary,
-  "danger":     $danger,
-  "light":      $light, 
-  "info":       $info,
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'danger': $danger,
+  'light': $light,
+  'info': $info,
 );
 
 // Body ===================
 //
 // Settings for the `<body>` element.
 
-$body-bg: $primary;//$white !default;
+$body-bg: $primary; //$white !default;
 $body-color: $secondary; //$gray-900 !default;
 
 // // Grid columns
@@ -37,7 +38,7 @@ $spacers: (
   3: $spacer,
   4: $spacer * 1.5,
   5: $spacer * 3,
-  6: 60px
+  6: 60px,
 ) !default;
 
 // Typography ===================
@@ -46,16 +47,15 @@ $spacers: (
 // Font, line-height, and color for body text, headings, and more.
 $variable-prefix: bs- !default;
 
-$font-family-monospace: 'Noto Sans TC', SFMono-Regular, Menlo, Monaco, Consolas,
-'Liberation Mono', 'Courier New', monospace;
+$font-family-monospace: 'Noto Sans TC', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+  'Courier New', monospace;
 // SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !default;
 // stylelint-enable value-keyword-case
 $font-family-base: var(
   --#{$variable-prefix}font-monospace
-  ); // var(--#{$variable-prefix}font-sans-serif) !default;
+); // var(--#{$variable-prefix}font-sans-serif) !default;
 
-
-$font-size-base: 1rem !default; 
+$font-size-base: 1rem !default;
 
 $line-height-base: 1.4; //1.5 !default;
 
@@ -79,25 +79,20 @@ $font-sizes: (
 ) !default;
 // scss-docs-end font-sizes
 
-
 $headings-margin-bottom: 0; //$spacer * 0.5 !default;
 
+// Body input
+$input-padding-y: 12px; // $input-btn-padding-y;
+$input-padding-x: 16px; // $input-btn-padding-x;
+$input-bg: white; //$white;
+$input-border-color: transparent; //$gray-400;
+$input-border-width: 0; //$input-btn-border-width;
+$input-box-shadow: none; //$box-shadow-inset;
+$input-placeholder-color: $info; //$gray-600 !default;
 
-
-
-// Body input 
-$input-padding-y:                       12px;      // $input-btn-padding-y;
-$input-padding-x:                       16px;      // $input-btn-padding-x;
-$input-bg:                            white; //$white;
-$input-border-color:                    transparent; //$gray-400;
-$input-border-width:                    0;//$input-btn-border-width;
-$input-box-shadow:                      none;//$box-shadow-inset;
-$input-placeholder-color:               $info;//$gray-600 !default;
-
-$form-label-margin-bottom:              0.25rem;//.5rem;
-$form-label-font-size:                  0.875rem; //null;
-$form-label-font-weight:                700; //null;
-
+$form-label-margin-bottom: 0.25rem; //.5rem;
+$form-label-font-size: 0.875rem; //null;
+$form-label-font-weight: 700; //null;
 
 // Links
 //
@@ -105,26 +100,23 @@ $form-label-font-weight:                700; //null;
 
 $link-color: $secondary; // $primary
 
-
 // Paragraphs
 //
 // Style p element.
 
 $paragraph-margin-bottom: 0; //1rem !default;
 
-
 // scss-docs-start box-shadow-variables
 
-$box-shadow: 0px 0px 15px rgba($black, 0.15);//0 0.5rem 1rem rgba($black, 0.15) !default;
+$box-shadow: 0px 0px 15px rgba($black, 0.15); //0 0.5rem 1rem rgba($black, 0.15) !default;
 $box-shadow-sm: 0 0 0.3rem 0.3rem rgba($black, 0.075); // 0 0.125rem 0.25rem rgba($black, 0.075) !default;
 $box-shadow-lg: 0 1rem 3rem rgba($black, 0.175) !default;
 $box-shadow-inset: inset 0 1px 2px rgba($black, 0.075) !default;
 // scss-docs-end box-shadow-variables
 
-
 // nav
-$nav-link-padding-y:  1rem; //0.5rem !default;
-$nav-tabs-border-color:             transparent; //$gray-300;
+$nav-link-padding-y: 1rem; //0.5rem !default;
+$nav-tabs-border-color: transparent; //$gray-300;
 // $nav-link-padding-x: 2rem; //1rem !default;
 // $nav-tabs-border-width:             $border-width;
 // $nav-tabs-border-radius:            $border-radius;
@@ -132,8 +124,6 @@ $nav-tabs-border-color:             transparent; //$gray-300;
 // $nav-tabs-link-active-color:        $gray-700;
 // $nav-tabs-link-active-bg:           $body-bg;
 // $nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg;
-
-
 
 // List group
 
@@ -146,14 +136,13 @@ $nav-tabs-border-color:             transparent; //$gray-300;
 $list-group-item-padding-y: 1rem;
 $list-group-border-color: $light; //rgba($black, 0.125) !default;
 
-
 // Cards
 $border-radius: 10px;
 
 // scss-docs-start card-variables
-$card-spacer-y:         0.5rem;//$spacer !default;
-$card-spacer-x:         1.5rem;//$spacer !default;
-$card-box-shadow:       $box-shadow;
-$card-border-color:     transparant;
-$card-cap-bg:           white;//            rgba($black, .03);
-$card-cap-padding-y:     1rem ;//           $card-spacer-y * .5;
+$card-spacer-y: 0.5rem; //$spacer !default;
+$card-spacer-x: 1.5rem; //$spacer !default;
+$card-box-shadow: $box-shadow;
+$card-border-color: transparant;
+$card-cap-bg: white; //            rgba($black, .03);
+$card-cap-padding-y: 1rem; //           $card-spacer-y * .5;
