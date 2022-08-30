@@ -3,7 +3,7 @@ import App from './App'
 
 describe('Routing', () => {
   const setup = (path) => {
-    window.history.pushState({}, '', path)
+    window.history.pushState({}, '', `#${path}`)
     render(<App />)
   }
 
@@ -12,9 +12,9 @@ describe('Routing', () => {
     ${'TodoListPage'} | ${'/'}        | ${'todo-page'}
     ${'SignUpPage'}   | ${'/sign-up'} | ${'sign-up-page'}
     ${'LoginPage'}    | ${'/login'}   | ${'login-page'}
-  `('當路徑為$name($path)時，顯示$name', ({ path, pathTestId }) => {
+  `('當路徑為$name($path)時，顯示$name', async ({ path, pathTestId }) => {
     setup(path)
-    const page = screen.queryByTestId(pathTestId)
+    const page = await screen.findByTestId(pathTestId)
     expect(page).toBeInTheDocument()
   })
 
