@@ -55,7 +55,7 @@ describe('SignUpPage', () => {
     let reqBody
     let counter = 0
     const server = setupServer(
-      rest.post('/users', (req, res, ctx) => {
+      rest.post('https://todoo.5xcamp.us/users', (req, res, ctx) => {
         counter += 1
         reqBody = req.body
         return res(ctx.status(200))
@@ -88,16 +88,30 @@ describe('SignUpPage', () => {
       return { button, password: passwordInput, passwordAgain: passwordAgainInput }
     }
 
+    const generateErrorReq = () => {
+      return rest.post('https://todoo.5xcamp.us/users', (req, res, ctx) => {
+        return res.once(
+          ctx.status(422),
+          ctx.json({
+            error: ['密碼 字數太少，至少需要 6 個字', '電子信箱 已被使用'],
+            message: '註冊發生錯誤',
+          })
+        )
+      })
+    }
+
     it('當input框皆有輸入值時，按鈕可點擊', async () => {
       const { button } = await setup()
       expect(button).toBeEnabled()
     })
+
     it('當密碼及再次輸入密碼相同及都有輸入時，按鈕可點擊', async () => {
       const { password, passwordAgain, button } = await setup()
       userEvent.type(password, 'asdfasfd12')
       userEvent.type(passwordAgain, 'asdfasfd1')
       expect(button).toBeDisabled()
     })
+
     it('點擊註冊按鈕，將用戶email、暱稱、密碼送至後端API', async () => {
       const { button } = await setup()
       userEvent.click(button)
@@ -110,6 +124,7 @@ describe('SignUpPage', () => {
         },
       })
     })
+
     it('呼叫API時，按鈕不能再被點擊', async () => {
       const { button } = await setup()
       userEvent.click(button)
@@ -151,18 +166,7 @@ describe('SignUpPage', () => {
       // await waitForElementToBeRemoved(form)
     })
     it('註冊信箱回傳狀態碼-422時，顯示錯誤訊息於頁面上', async () => {
-      server.use(
-        // 電子信箱 已被使用
-        rest.post('/users', (req, res, ctx) => {
-          return res.once(
-            ctx.status(422),
-            ctx.json({
-              error: ['密碼 字數太少，至少需要 6 個字', '電子信箱 已被使用'],
-              message: '註冊發生錯誤',
-            })
-          )
-        })
-      )
+      server.use(generateErrorReq())
       const { button } = await setup()
       userEvent.click(button)
 
@@ -173,18 +177,7 @@ describe('SignUpPage', () => {
       expect(validationErrorSecond).toBeInTheDocument()
     })
     it('接收到API回傳442後，隱藏spinner和啟用按鈕', async () => {
-      server.use(
-        // 電子信箱 已被使用
-        rest.post('/users', (req, res, ctx) => {
-          return res(
-            ctx.status(422),
-            ctx.json({
-              error: ['密碼 字數太少，至少需要 6 個字', '電子信箱 已被使用'],
-              message: '註冊發生錯誤',
-            })
-          )
-        })
-      )
+      server.use(generateErrorReq())
       const { button } = await setup()
       userEvent.click(button)
       await waitFor(() => {
@@ -192,14 +185,37 @@ describe('SignUpPage', () => {
         expect(button).toBeEnabled()
       })
     })
-
     // validation
-    // it('密碼與再次輸入密碼不符合時，顯示密碼不相同的訊息', () => {
-    //   setup({ password: 'Padfaasdf', passwordAgain: 'asdfasdfasdfasfd2' })
-    //   userEvent.type(password, 'asdfasfd12')
-    //   userEvent.type(passwordAgain, 'asdfasfd1')
-    //   const validationError = screen.queryByText('密碼不相同')
-    //   expect(validationError).toBeInTheDocument()
-    // })
+    it('密碼與再次輸入密碼不符合時，顯示密碼不相同的訊息', () => {
+      const { password, passwordAgain } = setup()
+      userEvent.type(password, 'asdfasfd12')
+      userEvent.type(passwordAgain, 'asdfasfd1')
+      waitFor(() => {
+        const validationError = screen.findByText('密碼與再次輸入密碼需相同')
+        expect(validationError).toBeInTheDocument()
+      })
+    })
+    it('email 不符合檢核時，顯示E-mail不符合格式的訊息', () => {
+      const { email } = setup()
+      userEvent.type(email, 'asdfasfd12')
+      userEvent.type(passwordAgain, 'asdfasfd1')
+      waitFor(() => {
+        const validationError = screen.queryByText('E-mail不符合格式')
+        expect(validationError).toBeInTheDocument()
+      })
+    })
+    it('當重新輸入資料時，清除api回傳422的訊息', async () => {
+      server.use(generateErrorReq())
+      const { button, password } = await setup()
+      userEvent.click(button)
+      const validationErrorFirst = await screen.findByText('密碼 字數太少，至少需要 6 個字')
+      const validationErrorSecond = await screen.findByText('電子信箱 已被使用')
+
+      userEvent.type(password, 'asdfasdf')
+      waitFor(() => {
+        expect(validationErrorFirst).not.toBeInTheDocument()
+        expect(validationErrorSecond).not.toBeInTheDocument()
+      })
+    })
   })
 })

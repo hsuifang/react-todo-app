@@ -1,18 +1,11 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Input from '../components/Input'
 import loginHero from '../assets/images/todo-hero.png'
 import logoCheck from '../assets/images/logo-check.png'
 
 function SignUpPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
-
   const [enable, setEnable] = useState(false)
   const [loading, setLoading] = useState(false)
   const [signUpSuccess, setSignUpSucess] = useState(false)
@@ -22,8 +15,11 @@ function SignUpPage() {
     nickname: '',
     password: '',
     passwordAgain: '',
+    err_email: '',
+    err_nickname: '',
+    err_password: '',
+    err_passwordAgain: '',
   })
-  console.log(errors)
 
   const [errorsMsg, setErrorsMsg] = useState([])
 
@@ -33,16 +29,17 @@ function SignUpPage() {
     try {
       setLoading(true)
       const { email, nickname, password } = userData
+      axios.defaults.baseURL = 'https://todoo.5xcamp.us'
       await axios.post('/users', {
         user: { email, nickname, password },
       })
       setSignUpSucess(true)
+      setLoading(false)
     } catch (error) {
       // regarless
       if (error.response.status === 422) {
         setErrorsMsg(error.response.data.error)
       }
-    } finally {
       setLoading(false)
     }
   }
@@ -52,17 +49,53 @@ function SignUpPage() {
       ...userData,
       [name]: value,
     }
-    setUserData(data)
-    setEnable(validInput(data))
+    const { status, result } = validInput(name, data)
+    setUserData(result)
+    setEnable(status)
+
+    if (errorsMsg.length) {
+      setErrorsMsg([])
+    }
   }
-  const validInput = ({ email, nickname, password, passwordAgain }) => {
+
+  const validInput = (name, data) => {
+    const { email, nickname, password, passwordAgain } = data
     const allInput = email && nickname && password && passwordAgain
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    const emailMatch = emailRegex.test(email)
     const passwordSame = password === passwordAgain
-    return Boolean(allInput && passwordSame)
+    const buttonStatus = Boolean(allInput && passwordSame && emailMatch)
+
+    if (name === 'password' || name === 'passwordAgain') {
+      const errMsg = '密碼與再次輸入密碼需相同'
+      return {
+        status: buttonStatus,
+        result: {
+          ...data,
+          err_password: passwordSame ? '' : errMsg,
+          err_passwordAgain: passwordSame ? '' : errMsg,
+        },
+      }
+    }
+
+    if (name === 'email') {
+      return {
+        status: buttonStatus,
+        result: {
+          ...data,
+          err_email: emailMatch ? '' : 'E-mail不符合格式',
+        },
+      }
+    }
+
+    return {
+      status: buttonStatus,
+      result: data,
+    }
   }
 
   return (
-    <div className='container py-5 vh-100'>
+    <div className='container py-5 vh-100' data-testid='sign-up-page'>
       <div className='row flex-lg-column align-items-center justify-content-center h-100'>
         <div className='row align-items-center'>
           <div className='col-12 col-lg-5 offset-lg-1'>
@@ -93,17 +126,17 @@ function SignUpPage() {
                   name='email'
                   type='email'
                   label='Email'
-                  help={errors.email}
+                  help={userData.err_email}
                   value={userData.email}
                   onChange={updateUserData}
                 />
-                {errors.email ? 'asdf' : 'asdfdd'}
+
                 <Input
                   id='nickname'
                   name='nickname'
                   label='您的暱稱'
                   value={userData.nickname}
-                  help={errors.nickname}
+                  help={userData.err_nickname}
                   onChange={updateUserData}
                 />
                 <Input
@@ -112,7 +145,7 @@ function SignUpPage() {
                   type='password'
                   label='密碼'
                   value={userData.password}
-                  help={errors.password}
+                  help={userData.err_password}
                   onChange={updateUserData}
                 />
                 <Input
@@ -121,7 +154,7 @@ function SignUpPage() {
                   type='password'
                   label='再次輸入密碼'
                   value={userData.passwordAgain}
-                  help={errors.passwordAgain}
+                  help={userData.err_passwordAgain}
                   onChange={updateUserData}
                 />
 
