@@ -1,9 +1,10 @@
-import axios from 'axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Input from '../components/Input'
-import loginHero from '../assets/images/todo-hero.png'
-import logoCheck from '../assets/images/logo-check.png'
+import Alert from '../components/Alert'
+import HeroCover from '../components/HeroCover'
+import ButtonWithProgress from '../components/ButtonWithProgress'
+import { signUp } from '../api/apiCalls'
 
 function SignUpPage() {
   const [enable, setEnable] = useState(false)
@@ -29,14 +30,11 @@ function SignUpPage() {
     try {
       setLoading(true)
       const { email, nickname, password } = userData
-      axios.defaults.baseURL = 'https://todoo.5xcamp.us'
-      await axios.post('/users', {
+      await signUp({
         user: { email, nickname, password },
       })
       setSignUpSucess(true)
-      setLoading(false)
     } catch (error) {
-      // regarless
       if (error.response.status === 422) {
         setErrorsMsg(error.response.data.error)
       }
@@ -99,26 +97,22 @@ function SignUpPage() {
       <div className='row flex-lg-column align-items-center justify-content-center h-100'>
         <div className='row align-items-center'>
           <div className='col-12 col-lg-5 offset-lg-1'>
-            <div className='d-flex mb-3 ms-lg-4 ps-lg-4 pb-1'>
-              <img src={logoCheck} alt='login hero' width={40} className='obj-fit-contain' />
-              <h1 className='fs-2 font-adorable'>ONLINE TODO LIST</h1>
-            </div>
-            <img src={loginHero} alt='login hero' className='d-none d-lg-block' />
+            <HeroCover />
           </div>
           <div className='col-12 col-lg-4 offset-lg-1'>
             <h2 className='mb-4'>註冊帳號</h2>
             {errorsMsg && (
               <ul>
                 {errorsMsg.map((err) => (
-                  <li key={err}>{err}</li>
+                  <li key={err}>
+                    <Alert type='danger' text={err} />
+                  </li>
                 ))}
               </ul>
             )}
 
             {signUpSuccess ? (
-              <div className='alert alert-success' role='alert'>
-                <p>註冊成功，前往TODO List頁面</p>
-              </div>
+              <Alert text='註冊成功，前往TODO List頁面' />
             ) : (
               <form onSubmit={onSubmit} data-testid='sign-up-form'>
                 <Input
@@ -159,20 +153,15 @@ function SignUpPage() {
                 />
 
                 <div className='w-50 m-auto mb-4'>
-                  <button
-                    className='btn btn-secondary w-100 fw-bold'
-                    type='submit'
-                    disabled={!enable || loading}
-                  >
-                    {loading && (
-                      <span
-                        className='spinner-grow spinner-grow-sm'
-                        role='status'
-                        aria-hidden='true'
-                      ></span>
-                    )}
+                  <ButtonWithProgress disabled={Boolean(!enable || loading)} apiProgress={loading}>
                     註冊帳號
-                  </button>
+                  </ButtonWithProgress>
+
+                  <div className='w-50 m-auto'>
+                    <Link to='/login' className='text-secondary d-block text-center fw-bold'>
+                      登入
+                    </Link>
+                  </div>
                 </div>
               </form>
             )}
@@ -181,11 +170,6 @@ function SignUpPage() {
       </div>
     </div>
   )
-  // <div className='w-50 m-auto'>
-  //   <Link to='/login' className='text-secondary d-block text-center fw-bold'>
-  //     登入
-  //   </Link>
-  // </div>
 }
 
 export default SignUpPage
