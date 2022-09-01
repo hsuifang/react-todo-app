@@ -22,7 +22,6 @@ describe('Input', () => {
   it('當 help 有值時，<span></span> 有 invalid-feedback className', () => {
     const { container } = setup('Error Message')
     const span = container.querySelector('span')
-    screen.debug()
     expect(span.classList).toContain('invalid-feedback')
   })
   it('當 help 「沒有」值時，<input/> 「沒有」 is-valid className', () => {

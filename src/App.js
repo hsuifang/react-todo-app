@@ -7,7 +7,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 function App() {
   return (
     <Router>
-      <div className='container'>
+      <div>
         <Routes>
           <Route exact path='/' element={<HomePage />}></Route>
           <Route path='/sign-up' element={<SignUpPage />}></Route>

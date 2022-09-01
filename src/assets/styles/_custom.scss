@@ -1,26 +1,28 @@
 .nav-tabs .nav-link {
-  border-bottom: 2px solid  transparent;
+  border-bottom: 2px solid transparent;
   &.active {
     color: $secondary !important;
     background-color: transparent !important;
-    border-color:  transparent;
-    border-bottom: 2px solid  $secondary;
+    border-color: transparent;
+    border-bottom: 2px solid $secondary;
   }
 
   &:hover {
-    border-color:  transparent;
-    border-color:  transparent;
-    border-bottom: 2px solid  $info;
+    border-color: transparent;
+    border-color: transparent;
+    border-bottom: 2px solid $info;
   }
 }
 
-.bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
-  font-weight: bold !important
+.bi::before,
+[class^='bi-']::before,
+[class*=' bi-']::before {
+  font-weight: bold !important;
 }
 
 .todo-bg {
-  @include media-breakpoint-up(lg) { 
-    background: linear-gradient(172.7deg,#FFD370 53.44%, #FFFFFF 53.45%);
+  @include media-breakpoint-up(lg) {
+    background: linear-gradient(172.7deg, #ffd370 53.44%, #ffffff 53.45%);
   }
 }
 
@@ -36,4 +38,16 @@
     height: 100%;
     background: rgba($primary, 0.8);
   }
+}
+.btn:hover,
+.btn:focus {
+  border-color: transparent;
+}
+.btn-primary-hover:hover {
+  border-radius: 2px;
+  background: rgba($primary, 0.3);
+}
+
+.bg-secondary-70 {
+  background-color: rgba($secondary, 0.7);
 }

@@ -1,12 +1,16 @@
 import axios from 'axios'
+import store from '../state/store'
+
 const service = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   timeout: 15000,
 })
 
 service.interceptors.request.use((request) => {
-  request.headers['Authorization'] =
-    'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyNjEiLCJzY3AiOiJ1c2VyIiwiYXVkIjpudWxsLCJpYXQiOjE2NjE5MDkyMTgsImV4cCI6MTY2MzIwNTIxOCwianRpIjoiNDE1NWQ2ZGYtMzQ2NS00YWJjLWI4YWYtY2ZkMWYyMDYzZGJmIn0.eaoAVzZVgRbl6SImn3uTej1KM9IxW8wXlSFVfi5lmT0'
+  const { headers } = store.getState().authReduer
+  if (headers) {
+    request.headers['authorization'] = headers.authorization
+  }
   return request
 })
 
@@ -28,12 +32,12 @@ export const loadTodos = () => {
   return service.get('/todos')
 }
 
-export const addTodo = () => {
-  return service.post('/todos')
+export const addTodo = (body) => {
+  return service.post('/todos', body)
 }
 
-export const updateTodo = (id) => {
-  return service.put(`/todos/${id}`)
+export const updateTodo = (id, body) => {
+  return service.put(`/todos/${id}`, body)
 }
 
 export const deleteTodo = (id) => {

@@ -1,9 +1,11 @@
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
-import LoginPage from './LoginPage'
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import { renderWithProviders } from '../test/setup'
+import LoginPage from './LoginPage'
 import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import storage from '../state/storage'
 
 let requestBody,
   count = 0
@@ -11,7 +13,7 @@ const server = setupServer(
   rest.post(`${process.env.REACT_APP_BASE_URL}/users/sign_in`, (req, res, ctx) => {
     count += 1
     requestBody = req.body
-    return res(ctx.status(200))
+    return res(ctx.status(200), ctx.json({ ...requestBody }))
   })
 )
 
@@ -36,16 +38,16 @@ beforeEach(() => {
   count = 0
   server.resetHandlers()
 })
+const setup = () => {
+  return renderWithProviders(
+    <BrowserRouter>
+      <LoginPage />
+    </BrowserRouter>
+  )
+}
 
 describe('Login Page', () => {
   describe('Layout', () => {
-    const setup = () => {
-      return render(
-        <BrowserRouter>
-          <LoginPage />
-        </BrowserRouter>
-      )
-    }
     it('有一個 Todo-app HERO 大圖', () => {
       setup()
       const heroComponent = screen.getByTestId('hero-cover')
@@ -94,7 +96,7 @@ describe('Login Page', () => {
   })
   describe('Interactions', () => {
     const setup = () => {
-      render(
+      renderWithProviders(
         <BrowserRouter>
           <LoginPage />
         </BrowserRouter>
@@ -168,6 +170,17 @@ describe('Login Page', () => {
       expect(errorMessage).toBeInTheDocument()
       userEvent.type(passwordInput, 'aasdf')
       expect(errorMessage).not.toBeInTheDocument()
+    })
+    it('儲存nickname / headers / isLoggedIn/ 在storage', async () => {
+      const { button } = setup()
+      userEvent.click(button)
+      waitFor(() => {
+        const storageState = storage.getItem('auth')
+        const objectFields = Object.keys(storageState)
+        expect(objectFields.includes('headers')).toBeTruthy()
+        expect(objectFields.includes('nickname')).toBeTruthy()
+        expect(objectFields.includes('isLoggedIn')).toBeTruthy()
+      })
     })
   })
 })

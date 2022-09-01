@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { signIn } from '../api/apiCalls'
-import HeroCover from '../components/HeroCover'
-import Input from '../components/Input'
 import Alert from '../components/Alert'
 import ButtonWithProgress from '../components/ButtonWithProgress'
+import Input from '../components/Input'
+import HeroCover from '../components/HeroCover'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -17,10 +18,12 @@ function LoginPage() {
   })
   const [apiProgress, setApiProgress] = useState(false)
   const [failMessage, setFailMessage] = useState('')
+  const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setApiProgress(true)
+    dispatch({ type: 'login_init' })
     try {
       const { email, password } = userInfo
       const data = {
@@ -29,7 +32,15 @@ function LoginPage() {
           password,
         },
       }
-      await signIn(data)
+      const res = await signIn(data)
+      const { nickname: resNickname } = res.data
+      dispatch({
+        type: 'login_success',
+        payload: {
+          nickname: resNickname,
+          headers: res.headers,
+        },
+      })
       navigate('/')
     } catch (error) {
       setFailMessage(error.response.data.message)
