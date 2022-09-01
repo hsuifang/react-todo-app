@@ -14,6 +14,24 @@ service.interceptors.request.use((request) => {
   return request
 })
 
+service.interceptors.response.use(
+  function (response) {
+    return response
+  },
+  function (error) {
+    const isLoginPage = window.location.hash.includes('#/login')
+    if (error.response.status === 401 && !isLoginPage) {
+      store.dispatch({ type: 'login_init' })
+      window.location.assign('#/login')
+      return
+    }
+    if (!window.navigator.onLine) {
+      alert('網路出了點問題，請重新連線後重整網頁')
+      return
+    }
+    return Promise.reject(error)
+  }
+)
 // Users
 export const signUp = (body) => {
   return service.post('/users', body)

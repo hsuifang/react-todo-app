@@ -150,8 +150,10 @@ describe('Login Page', () => {
       server.use(generateErrorReq())
       const { button } = setup()
       userEvent.click(button)
-      const errorMessage = await screen.findByText('登入錯誤')
-      expect(errorMessage).toBeInTheDocument()
+      waitFor(async () => {
+        const errorMessage = await screen.findByText('登入錯誤')
+        expect(errorMessage).toBeInTheDocument()
+      })
     })
     it('當重新輸入email後，清除錯誤訊息', async () => {
       server.use(generateErrorReq())

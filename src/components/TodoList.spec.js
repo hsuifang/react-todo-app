@@ -13,15 +13,6 @@ describe('Todo List', () => {
       </HashRouter>
     )
   }
-  describe('Layout', () => {
-    it('有Todo 狀態的NavTabs 元件', () => {
-      setup()
-      waitFor(() => {
-        const navTabs = screen.queryByTestId('nav-tabs')
-        expect(navTabs).toBeInTheDocument()
-      })
-    })
-  })
 
   describe('Interaction', () => {
     const data = {
@@ -225,6 +216,19 @@ describe('Todo List', () => {
         expect(screen.queryByTestId('todos-list')).toBeInTheDocument()
       })
     })
+
+    it('點擊清除已完成按鈕, 清除完成項目', async () => {
+      setup()
+      const clearAllBtn = await screen.findByRole('link', { name: '清除已完成項目' })
+      userEvent.click(clearAllBtn)
+      waitFor(() => {
+        const checkBox = screen.queryAllByRole('checkbox')
+        const todoItems = screen.queryAllByTestId('todo-item')
+        expect(todoItems.length).toBe(3)
+        expect(checkBox.length).toBe(3)
+      })
+    })
+
     // TODO 點擊更新按鈕呼叫API，有loading樣式
     // TODO 點擊更新按鈕呼叫API，更新資訊
   })

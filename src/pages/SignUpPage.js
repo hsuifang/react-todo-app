@@ -5,8 +5,10 @@ import Alert from '../components/Alert'
 import HeroCover from '../components/HeroCover'
 import ButtonWithProgress from '../components/ButtonWithProgress'
 import { signUp } from '../api/apiCalls'
+import { useDispatch } from 'react-redux'
 
 function SignUpPage() {
+  const dispatch = useDispatch()
   const [enable, setEnable] = useState(false)
   const [loading, setLoading] = useState(false)
   const [signUpSuccess, setSignUpSucess] = useState(false)
@@ -30,8 +32,16 @@ function SignUpPage() {
     try {
       setLoading(true)
       const { email, nickname, password } = userData
-      await signUp({
+      const res = await signUp({
         user: { email, nickname, password },
+      })
+
+      dispatch({
+        type: 'signup_success',
+        payload: {
+          nickname,
+          headers: res.headers,
+        },
       })
       setSignUpSucess(true)
     } catch (error) {
@@ -112,7 +122,12 @@ function SignUpPage() {
             )}
 
             {signUpSuccess ? (
-              <Alert text='註冊成功，前往TODO List頁面' />
+              <div>
+                <Alert text='註冊成功，請前往首頁新增項目！' />
+                <Link to='/' data-testid='redirect-home-page' className='btn btn-outline-secondary'>
+                  前往
+                </Link>
+              </div>
             ) : (
               <form onSubmit={onSubmit} data-testid='sign-up-form'>
                 <Input
@@ -152,16 +167,15 @@ function SignUpPage() {
                   onChange={updateUserData}
                 />
 
-                <div className='w-50 m-auto mb-4'>
+                <div className='w-50 m-auto my-4'>
                   <ButtonWithProgress disabled={Boolean(!enable || loading)} apiProgress={loading}>
                     註冊帳號
                   </ButtonWithProgress>
-
-                  <div className='w-50 m-auto'>
-                    <Link to='/login' className='text-secondary d-block text-center fw-bold'>
-                      登入
-                    </Link>
-                  </div>
+                </div>
+                <div className='w-50 m-auto'>
+                  <Link to='/login' className='text-secondary d-block text-center fw-bold'>
+                    登入
+                  </Link>
                 </div>
               </form>
             )}

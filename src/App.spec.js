@@ -138,3 +138,13 @@ describe('Logout', () => {
     })
   })
 })
+
+describe('unAuth', () => {
+  it('當沒有在首頁沒有auth檢核成功時，轉倒頁面到login', () => {
+    setup('/')
+    waitFor(async () => {
+      const loginPage = await screen.findByTestId('login-page')
+      expect(loginPage).toBeInTheDocument()
+    })
+  })
+})

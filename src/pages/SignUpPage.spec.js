@@ -1,6 +1,7 @@
 import SignUpPage from './SignUpPage'
 import { render, screen, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import { renderWithProviders } from '../test/setup'
 import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
@@ -8,7 +9,7 @@ import { rest } from 'msw'
 describe('SignUpPage', () => {
   describe('Layout', () => {
     const setup = () => {
-      return render(
+      return renderWithProviders(
         <BrowserRouter>
           <SignUpPage />
         </BrowserRouter>
@@ -89,7 +90,7 @@ describe('SignUpPage', () => {
     // let button, password, passwordAgain
     const setup = () => {
       //  The component <Link/> needs to be wrapped by a <Router/> component.
-      render(
+      renderWithProviders(
         <BrowserRouter>
           <SignUpPage />
         </BrowserRouter>
@@ -134,7 +135,7 @@ describe('SignUpPage', () => {
     it('點擊註冊按鈕，將用戶email、暱稱、密碼送至後端API', async () => {
       const { button } = setup()
       userEvent.click(button)
-      await screen.findByText('註冊成功，前往TODO List頁面')
+      await screen.findByText('註冊成功，請前往首頁新增項目！')
       expect(reqBody).toEqual({
         user: {
           email: 'hsuifang@gmail.com',
@@ -147,7 +148,7 @@ describe('SignUpPage', () => {
       const { button } = setup()
       userEvent.click(button)
       userEvent.click(button)
-      await screen.findByText('註冊成功，前往TODO List頁面')
+      await screen.findByText('註冊成功，請前往首頁新增項目！')
       expect(counter).toBe(1)
     })
     it('呼叫API時，按鈕有loading的樣式', async () => {
@@ -155,7 +156,7 @@ describe('SignUpPage', () => {
       userEvent.click(button)
       const spinner = screen.getByRole('status', { hidden: true })
       expect(spinner).toBeInTheDocument()
-      await screen.findByText('註冊成功，前往TODO List頁面')
+      await screen.findByText('註冊成功，請前往首頁新增項目！')
     })
     it('按鈕預設沒有loading的樣式', () => {
       setup()
@@ -164,11 +165,21 @@ describe('SignUpPage', () => {
     })
     it('註冊成功後，顯示啟用帳號資訊', async () => {
       const { button } = setup()
-      const message = '註冊成功，前往TODO List頁面'
+      const message = '註冊成功，請前往首頁新增項目！'
       expect(screen.queryByText(message)).not.toBeInTheDocument()
       userEvent.click(button)
-      const text = await screen.findByText('註冊成功，前往TODO List頁面')
+      const text = await screen.findByText(message)
       expect(text).toBeInTheDocument()
+    })
+    it('點擊前往連結，轉倒至Home Page', async () => {
+      const { button } = setup()
+      userEvent.click(button)
+      const link = await screen.findByRole('link', { name: '前往' })
+      userEvent.click(link)
+      waitFor(async () => {
+        const homePage = await screen.findByTestId('home-page')
+        expect(homePage).toBeInTheDocument()
+      })
     })
     it('成功註冊後，form表單隱藏', async () => {
       const { button } = await setup()

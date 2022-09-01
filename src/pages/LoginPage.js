@@ -43,7 +43,7 @@ function LoginPage() {
       })
       navigate('/')
     } catch (error) {
-      setFailMessage(error.response.data.message)
+      setFailMessage(error.response?.data.message)
     }
     setApiProgress(false)
   }
@@ -88,7 +88,7 @@ function LoginPage() {
                   onChange={updateUserData}
                 />
                 {failMessage && <Alert type='danger' text={failMessage} />}
-                <div className='w-50 m-auto mb-4'>
+                <div className='w-50 m-auto my-4'>
                   <ButtonWithProgress
                     apiProgress={apiProgress}
                     disabled={!(userInfo.email && userInfo.password) || apiProgress}

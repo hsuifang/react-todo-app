@@ -32,23 +32,6 @@ function TodoList() {
   const changeTabStatus = (status) => {
     if (!status || status === currentTab) return
     setCurrentTab(status)
-    filterVisibleItems(status, todos)
-  }
-
-  const filterVisibleItems = (status, items) => {
-    switch (status) {
-      case 'all':
-        setVisiableTodos(items)
-        break
-      case 'unfinished':
-        setVisiableTodos(items.filter((todo) => !todo.completed_at))
-        break
-      case 'finished':
-        setVisiableTodos(items.filter((todo) => todo.completed_at))
-        break
-      default:
-        break
-    }
   }
 
   const fetchTodo = async () => {
@@ -57,7 +40,6 @@ function TodoList() {
       const res = await loadTodos()
       const { todos } = res.data
       setTodos(todos)
-      filterVisibleItems(currentTab, todos)
     } catch (error) {}
     setApiCall(false)
   }
@@ -67,7 +49,6 @@ function TodoList() {
       const res = await addTodo({ todo: { content } })
       const result = res.data
       setTodos((prev) => [{ ...result, completed_at: '' }, ...prev])
-      filterVisibleItems(currentTab, [result, ...todos])
     } catch (error) {}
   }
   const handleEditItem = async ({ id, content }) => {
@@ -77,7 +58,6 @@ function TodoList() {
       const res = await updateTodo(id, { todo: { content } })
       const result = res.data
       setTodos((prev) => [{ ...result, completed_at: '' }, ...prev])
-      filterVisibleItems(currentTab, [result, ...todos])
       cancelEditField()
     } catch (error) {}
     setUpdateApiProgress(false)
@@ -95,7 +75,6 @@ function TodoList() {
       const res = await toggleTodo(id)
       const items = todos.map((item) => (item.id === id ? { ...res.data } : item))
       setTodos(items)
-      filterVisibleItems(currentTab, items)
     } catch (error) {}
   }
 
@@ -106,7 +85,6 @@ function TodoList() {
       await deleteTodo(id)
       const newItems = todos.filter((item) => item.id !== id)
       setTodos(newItems)
-      setVisiableTodos(newItems)
       setDeleteContnet('')
       setModalVisible(false)
     } catch (error) {}
@@ -116,18 +94,34 @@ function TodoList() {
   // TODO 可以做FP的練習
   const clearCompleteTodos = async (e) => {
     e.preventDefault()
-    // const completeItems = todos.filter((todo) => todo.completed_at)
-    // await completeItems.forEach(async (item) => {
-    //   await handleDeleteItem(item.id)
-    // })
-    // const unCompleteItems = todos.filter((todo) => !todo.completed_at)
-    // setTodos(unCompleteItems)
-    // setVisiableTodos(currentTab, unCompleteItems)
+    const completeItems = todos.filter((todo) => todo.completed_at)
+    for (let i = 0; i < completeItems.length; i++) {
+      try {
+        await deleteTodo(completeItems[i]['id'])
+      } catch (error) {}
+    }
+    await fetchTodo()
   }
 
   useEffect(() => {
     fetchTodo()
   }, [])
+
+  useEffect(() => {
+    switch (currentTab) {
+      case 'all':
+        setVisiableTodos(todos)
+        break
+      case 'unfinished':
+        setVisiableTodos(todos.filter((todo) => !todo.completed_at))
+        break
+      case 'finished':
+        setVisiableTodos(todos.filter((todo) => todo.completed_at))
+        break
+      default:
+        break
+    }
+  }, [currentTab, todos])
 
   return (
     <>
@@ -145,39 +139,45 @@ function TodoList() {
           <div className='w-100'></div>
           {!isEditItem && (
             <div className='col-lg-6' data-testid='todos-list'>
-              {visiableTodos.length ? (
+              {todos.length ? (
                 <div className='card shadow'>
-                  <div className='card-header'>
+                  <div className='card-header pt-0'>
                     <NavTabs current={currentTab} items={tabs} changeCurrent={changeTabStatus} />
                   </div>
                   <div className='card-body'>
                     <ul className='list-group list-group-flush border-bottom border-light'>
-                      {visiableTodos.map((todo) => (
-                        <TodoListItem
-                          id={todo.id}
-                          content={todo.content}
-                          completed={Boolean(todo.completed_at)}
-                          key={todo.id}
-                          handleToggleItem={handleToggleItem}
-                          handleDeleteItem={(item) => {
-                            setDeleteContnet(item)
-                            setModalVisible(true)
-                          }}
-                          handleEditItem={handleEditButton}
-                        />
-                      ))}
+                      {visiableTodos.length ? (
+                        visiableTodos.map((todo) => (
+                          <TodoListItem
+                            id={todo.id}
+                            content={todo.content}
+                            completed={Boolean(todo.completed_at)}
+                            key={todo.id}
+                            handleToggleItem={handleToggleItem}
+                            handleDeleteItem={(item) => {
+                              setDeleteContnet(item)
+                              setModalVisible(true)
+                            }}
+                            handleEditItem={handleEditButton}
+                          />
+                        ))
+                      ) : (
+                        <li>
+                          <p className='text-center mb-3'>目前尚無待辦事項</p>
+                        </li>
+                      )}
                     </ul>
                   </div>
                   <div className='card-footer'>
                     <div className='w-100 d-flex'>
                       {apiCall && <Spinner />}
                       <div className='d-flex justify-content-between w-100'>
-                        <Link className='text-info fs-7' to='/' onClick={clearCompleteTodos}>
-                          清除已完成項目
-                        </Link>
                         <p className='fs-7' data-testid='count_uncomplete'>
                           {todos.filter((item) => !item.completed_at).length}個待完成項目
                         </p>
+                        <Link className='text-info fs-7' to='/' onClick={clearCompleteTodos}>
+                          清除已完成項目
+                        </Link>
                       </div>
                     </div>
                   </div>
