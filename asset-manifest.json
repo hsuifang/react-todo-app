@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c768b601.css",
+    "main.js": "/static/js/main.13d56730.js",
+    "static/media/todo-hero.png": "/static/media/todo-hero.f361f57541d51a92904a.png",
+    "static/media/no-content.png": "/static/media/no-content.8d4dd3e18c11a0dba1d6.png",
+    "index.html": "/index.html",
+    "main.c768b601.css.map": "/static/css/main.c768b601.css.map",
+    "main.13d56730.js.map": "/static/js/main.13d56730.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c768b601.css",
+    "static/js/main.13d56730.js"
+  ]
+}
