@@ -48,11 +48,11 @@
 
 ### `npm build`
 
-由於要部署於 Github 之原因，故將檔案包版至/build/react-todo-app
+由於要部署於 Github 之原因，故將檔案包版至/build/
 
 ### `npm deploy`
 
-部署至 package.json homepage 所述 [react-todo-page](https://hsuifang.github.io/react-todo-app)
+部署 `build` 至 package.json homepage 所述 [react-todo-page](https://hsuifang.github.io/react-todo-app)
 
 ## 參考與學習資源
 
