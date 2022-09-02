@@ -1,70 +1,47 @@
-# Getting Started with Create React App
+- # 六角學院 - React 讀書會 / TODO LIST APP
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- ## Features
+- 此專案藉由六角學院，所提供的 [Swagger API](https://todoo.5xcamp.us/api-docs/index.html) 文件及 [UI 設計稿](https://www.figma.com/file/pFivfS3rDX3N3u3dN9aIlx/TodoList?node-id=0%3A1) 實現一個具有**註冊**、**登入**、CRUD 待辦事項之簡易型 [TODO LIST APP](https://hsuifang.github.io/react-todo-app)。
 
-## Available Scripts
+- 學院在任務要求上須包含以下 12 項
 
-In the project directory, you can run:
+  - 必做：需使用 React 框架來挑戰，並整合此任務提供的 API
+  - 必做：需使用 React Router，並統一部署到 GitHub Pages
+  - 必做：代辦為零筆資料時，需顯示文字「目前尚無代辦事項」
+  - 必做：新增代辦功能
+  - 必做：移除代辦功能
+  - 必做：切換代辦狀態(打勾表示已完成、未勾表示待完成)
+  - 必做：狀態頁籤切換功能(全部、待完成、已完成)
+  - 必做：確認待完成項目總數 (5 個待完成項目)
+  - 必做：清除已完成項目
+  - 必做：登入、註冊 API 功能
+  - 必做：表單欄位為空值或非 Email 格式時，需提醒用戶。(例：alert 彈跳、紅色文字顯示、SweetAlert2)
+  - 必做：需處理重複帳號註冊時， API 回傳錯誤時，需提醒用戶。(例：alert 彈跳、紅色文字顯示、SweetAlert2)
 
-### `npm start`
+- ## 頁面
+- ### 待辦事項 (route: /#/)
+  - 需要註冊過才能使用
+  - 可新增、編輯、刪除、查看用戶的待辦項目
+  - 切換頁籤查看待辦狀態
+  - 沒有身份，會直接轉導至登入頁面(/login)
+- ### 登入 (route: /#/login)
+- ### 註冊 (route: /#/sign-in)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  - 檢核輸入框機制
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- ## 系統說明
+- 在專案裡可使用以下 Script ：
+- ### `npm start`
+- 在 development 環境下執行 Runs the app in the development mode.\
+  Open [http://localhost:9876](http://localhost:9876) to view it in your browser.
+- ### `npm test`
+  執行測試腳本
+- ### `npm build`
+- 由於要部署於 Github 之原因，故將檔案包版至/build/react-todo-app
+- ### `npm deploy`
+- 部署至 package.json homepage 所述 [react-todo-page](https://hsuifang.github.io/react-todo-app)
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- ## 參考與學習資源
+- [六角學院 API 文件](https://todoo.5xcamp.us/api-docs/index.html)
+- [六角學院 UI 設計稿](https://www.figma.com/file/pFivfS3rDX3N3u3dN9aIlx/TodoList?node-id=0%3A1)
+- [Test Library](https://testing-library.com/)

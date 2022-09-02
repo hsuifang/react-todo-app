@@ -95,12 +95,14 @@ function TodoList() {
   const clearCompleteTodos = async (e) => {
     e.preventDefault()
     const completeItems = todos.filter((todo) => todo.completed_at)
-    for (let i = 0; i < completeItems.length; i++) {
-      try {
-        await deleteTodo(completeItems[i]['id'])
-      } catch (error) {}
+    if (completeItems.length > 0) {
+      for (let i = 0; i < completeItems.length; i++) {
+        try {
+          await deleteTodo(completeItems[i]['id'])
+        } catch (error) {}
+      }
+      await fetchTodo()
     }
-    await fetchTodo()
   }
 
   useEffect(() => {
@@ -128,6 +130,7 @@ function TodoList() {
       <div className='container py-lg-3'>
         <div className='row g-0 justify-content-center align-items-center py-3'>
           <div className='col-lg-6'>
+            {isEditItem && <p className='text-muted fs-7 mb-2 px-2 fw-bold'>編輯待辦事項</p>}
             <TodoForm
               handleAddItem={handleAddItem}
               handleEditItem={handleEditItem}
@@ -183,7 +186,7 @@ function TodoList() {
                   </div>
                 </div>
               ) : (
-                <div className='row g-0 justify-content-center'>
+                <div className='row g-0 justify-content-center mt-lg-6'>
                   <div className='col-lg-6'>
                     <p className='text-center mb-3'>目前尚無待辦事項</p>
                     <img

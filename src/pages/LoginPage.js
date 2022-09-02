@@ -18,6 +18,8 @@ function LoginPage() {
   })
   const [apiProgress, setApiProgress] = useState(false)
   const [failMessage, setFailMessage] = useState('')
+  const [enable, setEnable] = useState(false)
+
   const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
@@ -50,7 +52,43 @@ function LoginPage() {
 
   const updateUserData = (e) => {
     const { name, value } = e.target
-    setUserInfo((prevInfo) => ({ ...prevInfo, [name]: value }))
+    const { status, result } = validInput(name, {
+      ...userInfo,
+      [name]: value,
+    })
+    setUserInfo(result)
+    setEnable(status)
+  }
+  // TODO 搭配 Form
+  const validInput = (name, data) => {
+    const { email, password } = data
+    const allInput = email && password
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    const emailMatch = emailRegex.test(email)
+    const buttonStatus = Boolean(allInput && emailMatch)
+    if (name === 'email') {
+      return {
+        status: buttonStatus,
+        result: {
+          ...data,
+          err_email: emailMatch ? '' : 'E-mail不符合格式',
+        },
+      }
+    }
+    if (!data[name]) {
+      return {
+        status: buttonStatus,
+        result: {
+          ...data,
+          [`err_${name}`]: '此欄位為必填',
+        },
+      }
+    }
+
+    return {
+      status: buttonStatus,
+      result: data,
+    }
   }
 
   useEffect(() => {
@@ -73,7 +111,6 @@ function LoginPage() {
                   label='Email'
                   name='email'
                   type='email'
-                  placeholder='請輸入Email'
                   value={userInfo.email}
                   help={userInfo.err_email}
                   onChange={updateUserData}
@@ -89,10 +126,7 @@ function LoginPage() {
                 />
                 {failMessage && <Alert type='danger' text={failMessage} />}
                 <div className='w-50 m-auto my-4'>
-                  <ButtonWithProgress
-                    apiProgress={apiProgress}
-                    disabled={!(userInfo.email && userInfo.password) || apiProgress}
-                  >
+                  <ButtonWithProgress apiProgress={apiProgress} disabled={!enable || apiProgress}>
                     登入
                   </ButtonWithProgress>
                 </div>

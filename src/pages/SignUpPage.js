@@ -74,6 +74,16 @@ function SignUpPage() {
     const passwordSame = password === passwordAgain
     const buttonStatus = Boolean(allInput && passwordSame && emailMatch)
 
+    if (!data[name]) {
+      return {
+        status: buttonStatus,
+        result: {
+          ...data,
+          [`err_${name}`]: '此欄位為必填',
+        },
+      }
+    }
+
     if (name === 'password' || name === 'passwordAgain') {
       const errMsg = '密碼與再次輸入密碼需相同'
       return {
