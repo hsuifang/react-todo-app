@@ -75,19 +75,13 @@ function LoginPage() {
         },
       }
     }
-    if (!data[name]) {
-      return {
-        status: buttonStatus,
-        result: {
-          ...data,
-          [`err_${name}`]: '此欄位為必填',
-        },
-      }
-    }
 
     return {
       status: buttonStatus,
-      result: data,
+      result: {
+        ...data,
+        [`err_${name}`]: data[name] ? '' : '此欄位為必填',
+      },
     }
   }
 
